@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
-
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
-class LoginFormRequest extends FormRequest
+class RegisterFormRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,22 +21,15 @@ class LoginFormRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ];
-    }
-
-
-    public function messages(): array
     {
-        return [
-            'email.required' => 'L\'adresse e-mail est obligatoire pour la connexion.',
-            'password.required' => 'Le mot de passe est obligatoire.',
+          return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'string', 'confirmed', 'min:8'],
         ];
     }
 
-      public function failedValidation(Validator $validator)
+    public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'success' => false,

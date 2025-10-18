@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginFormRequest extends FormRequest
+class ForgotPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class LoginFormRequest extends FormRequest
      */
     public function rules(): array
     {return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'email' => ['required', 'email', 'exists:users,email'],
         ];
     }
 
@@ -33,8 +32,7 @@ class LoginFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'L\'adresse e-mail est obligatoire pour la connexion.',
-            'password.required' => 'Le mot de passe est obligatoire.',
+         'email.exists' => 'Aucun compte n\'est associé à cette adresse e-mail.',
         ];
     }
 

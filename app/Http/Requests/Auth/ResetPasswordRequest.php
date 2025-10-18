@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginFormRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class LoginFormRequest extends FormRequest
      */
     public function rules(): array
     {return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'token' => ['required', 'string'], 
+            'email' => ['required', 'email', 'exists:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 
@@ -33,8 +34,8 @@ class LoginFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'L\'adresse e-mail est obligatoire pour la connexion.',
-            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas au nouveau mot de passe.',
+            'password.min' => 'Le nouveau mot de passe doit contenir au moins 8 caractères.',
         ];
     }
 

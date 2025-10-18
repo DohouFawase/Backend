@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('last_name', 100);
             $table->string('first_name', 100)->nullable();
             $table->string('username', 100)->unique();
+            $table->string('otp_code')->nullable(); 
+            $table->boolean('is_verified')->default(false);
             $table->string('email', 150)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone', 30)->nullable();
@@ -32,6 +34,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamp('last_login')->nullable(); 
             $table->timestamps();
+            $table->timestamp('otp_expires_at')->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

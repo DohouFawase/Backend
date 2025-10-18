@@ -1,0 +1,143 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Notifications\VerifyOtpNotification; 
+use App\Mail\ResetPasswordMail;
+use App\Mail\sendOtpMail;
+use Illuminate\Http\Request;
+use Carbon\Carbon; 
+
+class AuthRepository
+{
+    public function __construct(private User $auth) {}
+
+    // ------------------------------------------
+    // A. Enregistrement (MIS À JOUR pour la clarté)
+    // ------------------------------------------
+    public function UserRegister($request)
+    {
+        $createRandomOtpNumber = random_int(100000, 999999);
+        $hashedPassword = Hash::make($request->password);
+        
+        // Utilisez Carbon ou l'objet natif de Laravel
+        $otpExpirationTime = Carbon::now()->addMinutes(10); 
+
+        $cretateUser = $this->auth->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $hashedPassword,
+            'otp_code' => $createRandomOtpNumber,
+            'otp_expires_at' => $otpExpirationTime,
+            'is_verified' => false, // Ajouter un statut par défaut
+        ]);
+
+        // Correction : Utilisez une classe Notification pour la méthode notify()
+        $cretateUser->notify(new sendOtpMail($createRandomOtpNumber));
+
+        return $cretateUser;
+    }
+
+  
+    public function login($request)
+    {
+        $user = $this->auth->where('email', $request->email)->first();
+
+        // 1. Vérification des identifiants et si l'utilisateur existe
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return false; // Échec de l'authentification
+        }
+
+        // 2. Vérification de l'état de vérification
+        if (isset($user->is_verified) && !$user->is_verified) {
+             return 'unverified'; // Compte non vérifié
+        }
+        
+        // 3. Génération du Token JWT (simulé avec Sanctum)
+        // Note : Si vous utilisez JWT-Auth, vous auriez `auth()->attempt()`
+        // Avec Sanctum, on crée le token manuellement.
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return [
+            'user' => $user,
+            'token' => $token,
+        ];
+    }
+    
+   
+    public function logout($request)
+    {
+        $request->user()->currentAccessToken()->delete(); 
+
+        return true;
+    }
+
+
+   
+    public function forgotPassword($request)
+    {
+        $user = $this->auth->where('email', $request->email)->first();
+
+        if (!$user) {
+            return true;
+        }
+
+        $token = Str::random(60); 
+
+        // 2. Stocker le token dans la table de réinitialisation
+        // Assurez-vous d'avoir la table `password_reset_tokens`
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->email], // Condition : met à jour si l'email existe
+            [
+                'token' => Hash::make($token), 
+                'created_at' => now()->addHours(1), // Token expire dans 1 heure (standard)
+            ]
+        );
+        
+        // 3. Envoyer l'email
+        // On envoie le token EN CLAIR pour qu'il puisse être utilisé dans l'URL de réinitialisation.
+        Mail::to($user->email)->send(new ResetPasswordMail($token));
+
+        return true;
+    }
+
+
+    public function resetPassword($request)
+    {
+        // 1. Récupérer l'enregistrement de réinitialisation du mot de passe
+        $resetRecord = DB::table('password_reset_tokens')
+                           ->where('email', $request->email)
+                           ->first();
+
+        // 2. Vérifications du token et de l'expiration
+        if (!$resetRecord || 
+            !Hash::check($request->token, $resetRecord->token) ||
+            Carbon::parse($resetRecord->created_at)->lessThan(now()->subHour(1))) 
+        {
+            return false;
+        }
+
+        // 3. Trouver l'utilisateur et mettre à jour le mot de passe
+        $user = $this->auth->where('email', $request->email)->first();
+        if (!$user) {
+            return false;
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // 4. Supprimer l'entrée
+        DB::table('password_reset_tokens')
+          ->where('email', $request->email)
+          ->delete();
+
+        return $user;
+    }
+}
