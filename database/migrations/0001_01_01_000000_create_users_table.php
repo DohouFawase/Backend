@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('email', 150)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone', 30)->nullable();
-            $table->string('country', 100);
+            $table->string('country', 100)->nullable();
             $table->string('city', 100)->nullable();
             $table->text('profile_description')->nullable();
             $table->string('profile_photo_url', 255)->nullable();
@@ -32,6 +32,8 @@ return new class extends Migration
             // $table->uuid('subscription_id')->nullable()->after('id');
             // $table->uuid('subscription_id')->nullable();
             // $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('set null');
+            $table->unsignedSmallInteger('reset_attempts')->default(0); // Compteur de tentatives
+            $table->timestamp('block_expires_at')->nullable();
             $table->rememberToken();
             $table->timestamp('last_login')->nullable(); 
             $table->timestamps();

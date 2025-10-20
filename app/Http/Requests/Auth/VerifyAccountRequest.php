@@ -5,7 +5,7 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-class RegisterFormRequest extends FormRequest
+class VerifyAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class RegisterFormRequest extends FormRequest
     public function rules(): array
     {
           return [
-            'last_name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'confirmed', 'min:8'],
+            'email' => ['required', 'email', 'exists:users,email'], 
+            'otp_code' => ['required', 'string', 'digits:6']
         ];
     }
 
@@ -37,5 +35,13 @@ class RegisterFormRequest extends FormRequest
             'message' => $validator->errors()->first(),
             'errors' => $validator->errors()
         ], 422));
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.exists' => 'Cet utilisateur n\'existe pas.',
+            'otp_code.digits' => 'Le code de vérification doit comporter 6 chiffres.',
+        ];
     }
 }

@@ -15,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ->prefix('api/v1')
                 ->group(base_path('routes/api.php'))
                 ->group(base_path('routes/v1/auth.php'))
-                ->group(base_path('routes/v1/equipements.php'));
+                ->group(base_path('routes/v1/equipements.php'))
+                ->group(base_path('routes/v1/propertytype.php'));
         }
         
     )

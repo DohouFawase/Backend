@@ -5,4 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/sign-up', [AuthController::class, 'register']);
+Route::post('/sign-in', [AuthController::class, 'login']);
+Route::post('/forgot-password',[AuthController::class, 'forgotPassword'] );
+Route::post('/verify-otp-reset', [AuthController::class, 'verifyOtpAndReset']);
+Route::post('/verify-account', [AuthController::class, 'verifyAccount']);
+Route::post('/resend-otp', [AuthController::class, 'resendOtp']);

@@ -36,7 +36,7 @@ class PropertyTypeController extends Controller
         try {
             // code...
             $data = $this->propertyTypeRepository->createPropertype($request->all());
-            return api_response(true, 'Catégorie créée avec succès', 200);
+            return api_response(true, 'Le type de propriéter a ete  créée avec succès', 200);
 
         } catch (\Throwable $e) {
             // throw $th;
@@ -51,7 +51,7 @@ class PropertyTypeController extends Controller
         // code...
         try {
             $updateCategory = $this->propertyTypeRepository->UpdateCategory($propertyType, $request->all());
-            return api_response(true, 'Catégorie mise à jour avec succès', $updateCategory);
+            return api_response(true, 'Le Type d propriéte a été mise à jour avec succès', $updateCategory);
         } catch (\Throwable $e) {
             // throw $th;
             return api_response(false, 'Erreur serveur lors de la mise à jour de la catégories', 500);

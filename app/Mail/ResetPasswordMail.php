@@ -16,10 +16,14 @@ class ResetPasswordMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+
+    public $tokenOrOtp;
+
+    public function __construct(string $tokenOrOtp)
     {
-        //
+        $this->tokenOrOtp = $tokenOrOtp;
     }
+   
 
     /**
      * Get the message envelope.
@@ -27,7 +31,7 @@ class ResetPasswordMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Password Mail',
+           subject: 'Réinitialisation de votre mot de passe',
         );
     }
 
@@ -38,6 +42,9 @@ class ResetPasswordMail extends Mailable
     {
         return new Content(
             markdown: 'mail.reset-password-mail',
+            with: [
+                'code' => $this->tokenOrOtp, 
+            ]
         );
     }
 
