@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 class AdVersion extends Model
 {
@@ -16,12 +18,12 @@ class AdVersion extends Model
    
 
     protected $fillable = [
-        'ad_id',
+    'ad_id',
         'status',
         'validated_at',
         'validated_by_id',
         'ad_type',
-        'property_type',
+        'property_type_id', 
         'seo_description',
         'full_address',
         'country',
@@ -36,18 +38,13 @@ class AdVersion extends Model
         'area_unit',
         'unit_count',
         'construction_type',
-        'electricity_type',
         'description',
-        'legal_status',
-        'accessibility',
-        'usage_type',
         'price',
         'currency',
         'commission',
         'deposit_months',
         'periodicity',
         'is_negotiable',
-        'equipments',
         'photos_json',
         'main_photo_filename',
         'video_url',
@@ -72,5 +69,15 @@ class AdVersion extends Model
     public function validator()
     {
         return $this->belongsTo(User::class, 'validated_by_id');
+    }
+
+    public function equipments(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Equipment::class, 
+            'ad_version_equipment', // Table pivot
+            'ad_version_id',        // Clé de ce modèle dans la pivot
+            'equipment_id'          // Clé du modèle cible dans la pivot
+        )->withTimestamps();
     }
 }

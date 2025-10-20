@@ -28,7 +28,6 @@ return new class extends Migration
 
             // --- Étape 1 : Type & titre
             $table->enum('ad_type', ['for_rent', 'for_sale']);
-            $table->string('property_type')->comment('apartment, studio, house, villa, etc.');
             $table->string('seo_description', 255)->comment('Ex: Apartment for rent in Tankpe, Calavi');
 
             // --- Étape 2 : Localisation
@@ -60,23 +59,12 @@ return new class extends Migration
             $table->integer('deposit_months')->nullable()->comment('Number of months rent (rent)');
             $table->enum('periodicity', ['day', 'night', 'week', 'month'])->nullable()->comment('Null for sale properties');
             $table->boolean('is_negotiable')->default(false)->comment('Yes/No (sale)');
-
-            // --- Étape 5 : Équipements
-            $table->json('equipments')->nullable()->comment('JSON list of equipment (e.g., [AC, WiFi])');
             
-            // --- Étape 6 : Médias
             $table->json('photos_json')->nullable()->comment('JSON list of photo files');
             $table->string('main_photo_filename', 255)->nullable();
             $table->string('video_url', 255)->nullable();
-
             $table->timestamps();
         });
-
-        // ⚠️ Mise à jour de la table `ads` pour lier la clé étrangère de la version active
-        Schema::table('ads', function (Blueprint $table) {
-            $table->foreign('active_version_id')->references('id')->on('ad_versions')->onDelete('set null');
-        });
-      
     }
 
     /**

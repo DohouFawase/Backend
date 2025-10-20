@@ -15,7 +15,7 @@ return new class extends Migration
          $table->uuid('id')->primary();
 
             $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             
             $table->uuid('plan_id');
             $table->foreign('plan_id')->references('id')->on('plans')->onDelete('restrict');

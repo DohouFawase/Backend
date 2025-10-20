@@ -29,8 +29,9 @@ return new class extends Migration
             $table->string('password', 255);
             $table->boolean('badge')->default(false);
             $table->enum('profile_status', ['active', 'suspended'])->default('active');
-            $table->uuid('subscription_id')->nullable();
-            $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('set null');
+            // $table->uuid('subscription_id')->nullable()->after('id');
+            // $table->uuid('subscription_id')->nullable();
+            // $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('set null');
             $table->rememberToken();
             $table->timestamp('last_login')->nullable(); 
             $table->timestamps();
