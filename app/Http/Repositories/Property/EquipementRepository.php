@@ -28,6 +28,7 @@ class EquipementRepository
     public function getAllEquipments()
     {
         $getEquimentWithCategory = $this->equipment->with('category')->get();
+     
         return $getEquimentWithCategory;
     }
 

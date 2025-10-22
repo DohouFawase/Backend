@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
-
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
-class LoginFormRequest extends FormRequest
+class VerifyLoginOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,22 +21,14 @@ class LoginFormRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ];
-    }
-
-
-    public function messages(): array
     {
-        return [
-            'email.required' => 'L\'adresse e-mail est obligatoire pour la connexion.',
-            'password.required' => 'Le mot de passe est obligatoire.',
+          return [
+              'email' => ['required', 'email', 'exists:users,email'],
+            'otp_code' => ['required', 'string', 'digits:6'],
         ];
     }
 
-      public function failedValidation(Validator $validator)
+    public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
@@ -47,13 +37,13 @@ class LoginFormRequest extends FormRequest
         ], 422));
     }
 
+     public function messages(): array
+    {
+        return [
+            'email.exists' => 'Cet utilisateur n\'existe pas.',
+            'otp_code.digits' => 'Le code OTP doit comporter 6 chiffres.',
+            'otp_code.required' => 'Le code OTP est obligatoire.',
+        ];
+    }
 
-    protected function prepareForValidation(): void
-{
-    // Supprime les espaces de début et de fin de l'email et du mot de passe.
-    $this->merge([
-        'email' => trim($this->email),
-        'password' => trim($this->password),
-    ]);
-}
 }

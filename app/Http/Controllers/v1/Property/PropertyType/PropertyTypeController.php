@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\v1\Property\PropertyType;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Repositories\Property\PropertyTypeRepository;
 use App\Http\Requests\PropertyType\CreatePropertyTypeFormRequest;
 use App\Http\Requests\PropertyType\UpdatePropertyTypeFormRequest;
@@ -20,9 +19,11 @@ class PropertyTypeController extends Controller
     {
         try {
             // code...
-            $getEquipementCategories = $this->propertyTypeRepository->getAllPropertype();
-
-            return $getEquipementCategories;
+            $getProperties = $this->propertyTypeRepository->getAllPropertype();
+            if($getProperties->isEmpty()){
+                return api_response(false, 'Aucun type de propriéter trouvé', 404);
+            }
+            return $getProperties;
         } catch (\Throwable $e) {
             // throw $th;
             return api_response(false, 500, 'Erreur serveur', $e->getMessage());
@@ -36,7 +37,7 @@ class PropertyTypeController extends Controller
         try {
             // code...
             $data = $this->propertyTypeRepository->createPropertype($request->all());
-            return api_response(true, 'Le type de propriéter a ete  créée avec succès', 200);
+            return api_response(true, 'Le type de propriéter a ete  créée avec succès', 201, $data);
 
         } catch (\Throwable $e) {
             // throw $th;
@@ -51,7 +52,7 @@ class PropertyTypeController extends Controller
         // code...
         try {
             $updateCategory = $this->propertyTypeRepository->UpdateCategory($propertyType, $request->all());
-            return api_response(true, 'Le Type d propriéte a été mise à jour avec succès', $updateCategory);
+            return api_response(true, 'Le Type d propriéte a été mise à jour avec succès', 201, $updateCategory);
         } catch (\Throwable $e) {
             // throw $th;
             return api_response(false, 'Erreur serveur lors de la mise à jour de la catégories', 500);

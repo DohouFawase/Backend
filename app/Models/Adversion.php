@@ -48,6 +48,7 @@ class AdVersion extends Model
         'photos_json',
         'main_photo_filename',
         'video_url',
+        'property_type_id',
     ];
 
     protected $casts = [

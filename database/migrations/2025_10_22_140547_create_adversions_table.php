@@ -12,11 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ad_versions', function (Blueprint $table) {
-           
             $table->uuid('id')->primary();
             
             // Clé étrangère vers l'annonce
-            $table->uuid('ad_id');
+            $table->uuid('ad_id')->nullable();
             $table->foreign('ad_id')->references('id')->on('ads')->onDelete('cascade');
             
             $table->enum('status', ['pending', 'validated', 'refused', 'archived'])->default('pending');
@@ -59,7 +58,8 @@ return new class extends Migration
             $table->integer('deposit_months')->nullable()->comment('Number of months rent (rent)');
             $table->enum('periodicity', ['day', 'night', 'week', 'month'])->nullable()->comment('Null for sale properties');
             $table->boolean('is_negotiable')->default(false)->comment('Yes/No (sale)');
-            
+        $table->uuid('property_type_id')->nullable(); 
+        $table->foreign('property_type_id')->references('id')->on('property_types')->onDelete('set null');
             $table->json('photos_json')->nullable()->comment('JSON list of photo files');
             $table->string('main_photo_filename', 255)->nullable();
             $table->string('video_url', 255)->nullable();
@@ -72,7 +72,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-       Schema::table('ads', function (Blueprint $table) {
+         Schema::table('ads', function (Blueprint $table) {
             $table->dropForeign(['active_version_id']);
         });
         

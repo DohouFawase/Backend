@@ -19,11 +19,14 @@ class EquipementController extends Controller
         try {
             // code...
             $getEquipementCategories = $this->equipementRepository->getAllEquipments();
-
+                if($getEquipementCategories->isEmpty()){
+                    return api_response(false, 'Aucun équipement trouvé', 404);
+                }
             return $getEquipementCategories;
         } catch (\Throwable $e) {
             // throw $th;
-            return api_response(false, 500, 'Erreur serveur', $e->getMessage());
+                      return api_response(false, 'Erreur serveur ', 500, $e->getMessage());
+
         }
     }
 

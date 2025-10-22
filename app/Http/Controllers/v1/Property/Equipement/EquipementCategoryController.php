@@ -20,11 +20,14 @@ class EquipementCategoryController extends Controller
         try {
             // code...
             $getEquipementCategories = $this->equipementCategorieRepository->getAllCategories();
-
+                if($getEquipementCategories->isEmpty()){
+                    return api_response(false, 'Aucune catégorie trouvée', 404);
+                }
             return $getEquipementCategories;
         } catch (\Throwable $e) {
             // throw $th;
-            return api_response(false, 500, 'Erreur serveur', $e->getMessage());
+                        return api_response(false, 'Erreur serveir', 500, $e->getMessage());
+
         }
     }
 
@@ -35,11 +38,11 @@ class EquipementCategoryController extends Controller
         try {
             // code...
             $data = $this->equipementCategorieRepository->CreateCategries($request->all());
-            return api_response(true, 'Catégorie créée avec succès', 200);
+            return api_response(true, 'Catégorie créée avec succès', 201, $data);
 
         } catch (\Throwable $e) {
             // throw $th;
-            return api_response(false, 'Erreur serveur lors de la création de la catégories', 500);
+            return api_response(false, 'Erreur serveur lors de la création de la catégories', 500, $e->getMessage());
 
         }
     }

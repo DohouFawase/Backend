@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
 use App\Http\Repositories\Authentication\AuthRepository;
+use App\Http\Requests\Auth\CheckEmailRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\LoginFormRequest;
 use App\Http\Requests\Auth\RegisterFormRequest;
@@ -11,6 +12,7 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordWithOtpRequest;
 use App\Http\Requests\Auth\VerifyAccountRequest;
 use App\Http\Requests\Auth\ResendOtpRequest;
+use App\Http\Requests\Auth\VerifyLoginOtpRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -165,4 +167,64 @@ class AuthController extends Controller
         return api_response(false, "Une erreur est survenue lors du renvoi du code.", $e->getMessage(), 500);
     }
 }
+
+
+
+
+public function verifyLoginOtp(VerifyLoginOtpRequest $request): JsonResponse
+{
+    try {
+        $result = $this->authRepository->validateLoginOtpAndIssueToken($request->validated());
+
+        if ($result === false) {
+            return api_response(false, "Code OTP invalide ou expiré.", null, 403); // 403 Forbidden
+        }
+        
+        // Succès : Le résultat contient l'utilisateur et le token
+        return api_response(true, 'Connexion réussie. Bienvenue !', $result);
+
+    } catch (\Throwable $e) {
+        return api_response(false, 'Une erreur est survenue lors de la validation de l\'OTP.', $e->getMessage(), 500);
+    }
+}
+
+
+public function checkEmail(CheckEmailRequest $request): JsonResponse
+{
+    try {
+        $result = $this->authRepository->checkEmail($request->email);
+        
+        if ($result === false) {
+             // Aucun compte trouvé avec cet email
+            return api_response(false, 'Aucun compte associé à cet email.', null, 404); // 404 Not Found
+        }
+          if ($result['status'] === 'unverified') {
+            // Le compte existe mais n'est pas vérifié
+            return api_response(
+                false, 
+                "Votre compte n'a pas été vérifié. Veuillez valider votre code OTP d'inscription.", 
+                ['verified' => false, 'email' => $result['user']->email], 
+                403 // 403 Forbidden
+            );
+        }
+
+        if ($result['status'] === 'otp_sent') {
+            // Succès : OTP envoyé
+            return api_response(
+                true, 
+                'Un code de vérification a été envoyé à votre adresse e-mail.', 
+                ['otp_sent' => true, 'email' => $result['user']->email], 
+                200
+            );
+        }
+
+        // Succès : Le résultat contient l'utilisateur et le token
+        return api_response(false, 'Une erreur inattendue est survenue.', null, 500);
+
+    } catch (\Throwable $e) {
+        return api_response(false, 'Une erreur est survenue lors de la validation de l\'OTP.', $e->getMessage(), 500);
+    }
+}
+
+
 }

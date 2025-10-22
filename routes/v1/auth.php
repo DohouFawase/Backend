@@ -11,3 +11,5 @@ Route::post('/forgot-password',[AuthController::class, 'forgotPassword'] );
 Route::post('/verify-otp-reset', [AuthController::class, 'verifyOtpAndReset']);
 Route::post('/verify-account', [AuthController::class, 'verifyAccount']);
 Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
+Route::post('/verify-login-otp', [AuthController::class, 'verifyLoginOtp']);
+Route::post('/check-email', [AuthController::class, 'checkEmail']);
