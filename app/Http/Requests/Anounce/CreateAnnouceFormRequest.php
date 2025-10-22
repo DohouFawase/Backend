@@ -68,7 +68,7 @@ class CreateAnnouceFormRequest extends FormRequest
             
             // Négociable seulement pour la vente
             'is_negotiable' => [Rule::requiredIf($this->ad_type === 'for_sale'), 'boolean'], 
-'             property_type_id' => ['required', 'uuid', 'exists:property_types,id'],
+            'property_type_id' => ['required', 'uuid', 'exists:property_types,id'],
 
             // ... (Autres champs de localisation et caractéristiques) ...
             

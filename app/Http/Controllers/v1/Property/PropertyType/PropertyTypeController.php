@@ -34,10 +34,11 @@ class PropertyTypeController extends Controller
 
     {
         //
+        $data = $this->propertyTypeRepository->createPropertype($request->all());
+        return $data;
+        // return api_response(true, 'Le type de propriéter a ete  créée avec succès', 201, $data);
         try {
             // code...
-            $data = $this->propertyTypeRepository->createPropertype($request->all());
-            return api_response(true, 'Le type de propriéter a ete  créée avec succès', 201, $data);
 
         } catch (\Throwable $e) {
             // throw $th;

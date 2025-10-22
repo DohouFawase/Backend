@@ -38,7 +38,8 @@ class EquipementCategoryController extends Controller
         try {
             // code...
             $data = $this->equipementCategorieRepository->CreateCategries($request->all());
-            return api_response(true, 'Catégorie créée avec succès', 201, $data);
+            return $data;
+            // return api_response(true, 'Catégorie créée avec succès', 201, $data);
 
         } catch (\Throwable $e) {
             // throw $th;
