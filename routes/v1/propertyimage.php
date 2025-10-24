@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\v1\Property\Annouce\AdVersionController;
-use App\Http\Controllers\v1\Property\PropertyImage\PropertyImageController;
+use App\Http\Controllers\v1\Property\IImageProperty\PropertyImageController;
 use App\Http\Controllers\v1\Property\PropertyType\PropertyTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::resource('propertieimages', PropertyImageController::class);
+Route::resource('propertieimages', PropertyImageController::class)->middleware('auth:sanctum')->except([
+'index', 'show'
+]);;
 // ->only([
 //     'index', 'show'
 // ]);×

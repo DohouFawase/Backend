@@ -59,7 +59,7 @@ return new class extends Migration
             $table->enum('periodicity', ['day', 'night', 'week', 'month'])->nullable()->comment('Null for sale properties');
             $table->boolean('is_negotiable')->default(false)->comment('Yes/No (sale)');
         $table->uuid('property_type_id')->nullable(); 
-        $table->foreign('property_type_id')->references('id')->on('property_types')->onDelete('set null');
+        $table->foreign('propehow to make,image uplde rty_type_id')->references('id')->on('property_types')->onDelete('set null');
             $table->json('photos_json')->nullable()->comment('JSON list of photo files');
             $table->string('main_photo_filename', 255)->nullable();
             $table->string('video_url', 255)->nullable();
