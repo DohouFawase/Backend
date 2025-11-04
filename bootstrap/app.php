@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/v1/equipements.php'))
                 ->group(base_path('routes/v1/propertytype.php'))
                 ->group(base_path('routes/v1/propertyimage.php'))
+                ->group(base_path('routes/v1/plan.php'))
+                ->group(base_path('routes/v1/user.php'))
                 ->group(base_path('routes/v1/adversions.php'));
         },
 

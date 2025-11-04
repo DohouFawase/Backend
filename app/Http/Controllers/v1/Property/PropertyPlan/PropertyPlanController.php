@@ -4,13 +4,13 @@ namespace App\Http\Controllers\v1\Property\PropertyPlan;
 
 use App\Http\Controllers\Controller;
 use App\Http\Repositories\Property\PlanRepository;
-use App\Http\Requests\Planproperty\CreatePlanFormRequest; // Notre FormRequest de création
-use App\Http\Requests\Planproperty\UpdatePlanFormRequest; // Nous allons la créer ensuite
+use App\Http\Requests\PlanProperty\CreatePlanFormRequest; // Notre FormRequest de création
+use App\Http\Requests\PlanProperty\UpdatePlanFormRequest; // Nous allons la créer ensuite
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
 
-class AdVersionController extends Controller
+class PropertyPlanController extends Controller
 {
     protected $planRepository;
 
@@ -25,7 +25,7 @@ class AdVersionController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         try {
             // Validation des filtres

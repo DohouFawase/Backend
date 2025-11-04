@@ -5,8 +5,9 @@ namespace App\Http\Requests\Planproperty;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
-class CreatePlanFormRequest extends FormRequest
+class UpdatePlanFormRequest extends FormRequest
 {
     /**
      * Détermine si l'utilisateur est autorisé à effectuer cette requête.
@@ -25,13 +26,14 @@ class CreatePlanFormRequest extends FormRequest
      */
     public function rules(): array
     {
+         $planId = $this->route('planID');
         return [
             // Informations de base
             'name' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
-                'unique:plans,name' // Assure que le nom du plan est unique
+                  Rule::unique('plans', 'name')->ignore($planId)
             ],
             'description' => [
                 'nullable',
@@ -39,49 +41,49 @@ class CreatePlanFormRequest extends FormRequest
                 'max:1000'
             ],
             'price' => [
-                'required',
+                'nullable',
                 'numeric',
                 'min:0', // Le prix ne peut pas être négatif
                 'regex:/^\d+(\.\d{1,2})?$/' // Optionnel: format décimal (ex: 10 ou 10.99)
             ],
             'duration_days' => [
-                'required',
+                'nullable',
                 'integer',
                 'min:1' // La durée doit être d'au moins 1 jour
             ],
             'visibility_level' => [
-                'required',
+                'nullable',
                 'string',
                 'max:50' // À ajuster selon vos niveaux de visibilité (ex: 'standard', 'premium')
             ],
 
             // Limites d'annonces
             'max_rent_ads' => [
-                'required',
+                'nullable',
                 'integer',
                 'min:-1' // -1 pour illimité, 0 ou plus pour une limite
             ],
             'max_sale_ads' => [
-                'required',
+                'nullable',
                 'integer',
                 'min:-1'
             ],
             
             // Indicateurs de fonctionnalités (booléens)
             'has_dashboard' => [
-                'required',
+                'nullable',
                 'boolean'
             ],
             'has_verified_badge' => [
-                'required',
+                'nullable',
                 'boolean'
             ],
             'has_multi_user_management' => [
-                'required',
+                'nullable',
                 'boolean'
             ],
             'has_priority_support' => [
-                'required',
+                'nullable',
                 'boolean'
             ],
         ];
@@ -96,7 +98,7 @@ class CreatePlanFormRequest extends FormRequest
     {
         return [
             // Nom
-            'name.required' => 'Le nom du plan est obligatoire.',
+            'name.nullable' => 'Le nom du plan est obligatoire.',
             'name.unique' => 'Ce nom de plan existe déjà.',
             'name.max' => 'Le nom du plan ne doit pas dépasser 255 caractères.',
             
@@ -104,35 +106,35 @@ class CreatePlanFormRequest extends FormRequest
             'description.max' => 'La description ne doit pas dépasser 1000 caractères.',
 
             // Prix
-            'price.required' => 'Le prix est obligatoire.',
+            'price.nullable' => 'Le prix est obligatoire.',
             'price.numeric' => 'Le prix doit être un nombre.',
             'price.min' => 'Le prix ne peut pas être négatif.',
             
             // Durée
-            'duration_days.required' => 'La durée en jours est obligatoire.',
+            'duration_days.nullable' => 'La durée en jours est obligatoire.',
             'duration_days.integer' => 'La durée doit être un nombre entier.',
             'duration_days.min' => 'La durée minimale est de 1 jour.',
             
             // Niveau de visibilité
-            'visibility_level.required' => 'Le niveau de visibilité est obligatoire.',
+            'visibility_level.nullable' => 'Le niveau de visibilité est obligatoire.',
             
             // Limites d'annonces
-            'max_rent_ads.required' => 'La limite d\'annonces de location est obligatoire.',
+            'max_rent_ads.nullable' => 'La limite d\'annonces de location est obligatoire.',
             'max_rent_ads.integer' => 'La limite d\'annonces de location doit être un nombre entier.',
             'max_rent_ads.min' => 'La limite d\'annonces de location doit être -1 (illimité) ou positive.',
-            'max_sale_ads.required' => 'La limite d\'annonces de vente est obligatoire.',
+            'max_sale_ads.nullable' => 'La limite d\'annonces de vente est obligatoire.',
             'max_sale_ads.integer' => 'La limite d\'annonces de vente doit être un nombre entier.',
             'max_sale_ads.min' => 'La limite d\'annonces de vente doit être -1 (illimité) ou positive.',
             
             // Indicateurs booléens
-            'has_dashboard.required' => 'Le statut du tableau de bord est obligatoire.',
+            'has_dashboard.nullable' => 'Le statut du tableau de bord est obligatoire.',
             'has_dashboard.boolean' => 'Le statut du tableau de bord doit être vrai ou faux.',
             // Répéter pour les autres has_*
-            'has_verified_badge.required' => 'Le statut du badge vérifié est obligatoire.',
+            'has_verified_badge.nullable' => 'Le statut du badge vérifié est obligatoire.',
             'has_verified_badge.boolean' => 'Le statut du badge vérifié doit être vrai ou faux.',
-            'has_multi_user_management.required' => 'Le statut de la gestion multi-utilisateur est obligatoire.',
+            'has_multi_user_management.nullable' => 'Le statut de la gestion multi-utilisateur est obligatoire.',
             'has_multi_user_management.boolean' => 'Le statut de la gestion multi-utilisateur doit être vrai ou faux.',
-            'has_priority_support.required' => 'Le statut du support prioritaire est obligatoire.',
+            'has_priority_support.nullable' => 'Le statut du support prioritaire est obligatoire.',
             'has_priority_support.boolean' => 'Le statut du support prioritaire doit être vrai ou faux.',
         ];
     }

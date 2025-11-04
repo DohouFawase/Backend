@@ -29,10 +29,10 @@ class PlanRepository
     public function create(array $data): ?Plan
     {
         try {
-            // La méthode create d'Eloquent gère l'insertion et retourne l'objet créé.
             $plan = $this->plan->create($data);
 
             return $plan;
+            // La méthode create d'Eloquent gère l'insertion et retourne l'objet créé.
         } catch (Throwable $e) {
             Log::error("Erreur création Plan: " . $e->getMessage());
             return null;
@@ -95,19 +95,15 @@ class PlanRepository
      */
     public function update(string $planId, array $data): ?Plan
     {
-        try {
-            $plan = $this->plan->findOrFail($planId);
+        $plan = $this->plan->findOrFail($planId);
 
-            $plan->update($data);
+        $plan->update($data);
 
-            // Recharger les relations après la mise à jour si nécessaire
-            $plan->load('subscriptions');
+        // Recharger les relations après la mise à jour si nécessaire
+        $plan->load('subscriptions');
 
-            return $plan;
-        } catch (Throwable $e) {
-            Log::error("Erreur mise à jour Plan (ID: {$planId}): " . $e->getMessage());
-            return null;
-        }
+        return $plan;
+       
     }
 
     /**
